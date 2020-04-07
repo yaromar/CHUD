@@ -2,10 +2,12 @@ import pandas as pd
 from os import listdir
 import numpy as np
 
-
+#the annotation file should be in the same directory as the script
 annotations = pd.read_csv('UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz', delimiter='\t', compression='gzip')[['f0', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar']].set_index('f0')
 annotations = annotations.fillna({'SOMATIC': '0'})
 
+#the FOLDER with the somatic calls files should be in the current directory
+#this folder's name should be 'Filtered_SomaticCalls_v1'
 with open('variantCount_output.txt', 'w') as fh:
     fh.write('\t'.join(['sample_id', 'num_FilterMutect', 'annotated_overlap', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar', '\n']))
     
