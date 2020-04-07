@@ -9,6 +9,7 @@ annotations = annotations.fillna({'SOMATIC': '0'})
 #the FOLDER with the somatic calls files should be in the current directory
 #this folder's name should be 'Filtered_SomaticCalls_v1'
 #the files should be compressed and have .bgz extension
+#there should be no other files
 with open('variantCount_output.txt', 'w') as fh:
     fh.write('\t'.join(['sample_id', 'num_FilterMutect', 'annotated_overlap', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar', '\n']))
     
