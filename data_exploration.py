@@ -9,6 +9,8 @@
 
 # psql -h localhost -p 5432 chuddb
 
+# COPY Variant FROM '/ysm-gpfs/project/smz25/CHUD/UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.txt' DELIMITER E'\t';
+
 import pandas as pd
 
 # var_annotations = "UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz"
