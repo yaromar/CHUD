@@ -16,14 +16,14 @@ print("args", args)
 
 
 #the annotation file should be in the same directory as the script
-annotations = pd.read_csv(args["annotation-file"], delimiter='\t', compression='gzip')[['f0', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar']].set_index('f0')
+annotations = pd.read_csv(args.annotation_file, delimiter='\t', compression='gzip')[['f0', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar']].set_index('f0')
 annotations = annotations.fillna({'SOMATIC': '0'})
 
 #the FOLDER with the somatic calls files should be in the current directory
 #this folder's name should be 'Filtered_SomaticCalls_v1'
 #the files should be compressed and have .bgz extension
 #there should be no other files
-with open(args["output-file"], 'w') as fh:
+with open(args.output_file, 'w') as fh:
     fh.write('\t'.join(['sample_id',
                         'num_FilterMutect',
                         'overlap',
