@@ -36,7 +36,7 @@ with open('test.txt', 'w') as fh:
     fh.write('\n')
 
     for file in listdir('Filtered_SomaticCalls_v1'):
-        sample = pd.read_csv('Filtered_SomaticCalls_v1/1169275_23173_0_0-filtered.vcf.gz.1577.GTs.bgz', delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
+        sample = pd.read_csv('Filtered_SomaticCalls_v1/'+file, delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
         temp = pd.concat([annotations, sample], axis=1, join='inner')
 
         sampleID, mutectVar = [file.split('.', 4)[i] for i in (0, 3)]
