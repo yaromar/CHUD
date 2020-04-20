@@ -11,6 +11,9 @@ parser.add_argument("annotation_file", metavar="annotation-file", help="Full pat
 parser.add_argument("output_file", metavar="output-file", help="Name of output file")
 # Example: 'variantCount_output.txt'
 
+parser.add_argument("sample_file_dir", metavar="sample-file_dir", help="Full path of sample file directory")
+# Example: 'Filtered_SomaticCalls_v1/'
+
 args = parser.parse_args()
 print("args", args)
 
@@ -48,8 +51,8 @@ with open(args.output_file, 'w') as fh:
                        ]))
     fh.write('\n')
 
-    for file in listdir('Filtered_SomaticCalls_v1'):
-        sample = pd.read_csv('Filtered_SomaticCalls_v1/'+file, delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
+    for file in listdir(args.sample_file_dir):
+        sample = pd.read_csv(args.sample_file_dir + file, delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
         temp = pd.concat([annotations, sample], axis=1, join='inner')
 
         sampleID, mutectVar = [file.split('.', 4)[i] for i in (0, 3)]
