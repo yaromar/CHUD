@@ -5,13 +5,12 @@ import argparse
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("annotation-file", help="Full path of annotation file")
+parser.add_argument("annotation_file", metavar="annotation-file", help="Full path of annotation file")
 # Example: 'UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz'
 
-parser.add_argument("output-file", help="Name of output file")
+parser.add_argument("output_file", metavar="output-file", help="Name of output file")
 # Example: 'variantCount_output.txt'
 
-parser.add_argument("square", help="display a square of a given number")                                        
 args = parser.parse_args()
 print("args", args)
 
