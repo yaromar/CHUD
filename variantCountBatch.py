@@ -1,3 +1,5 @@
+# This file will process sample vcf files in N-sized batches based on command line arguments (in alphanumeric sorted order of the directory)
+
 import pandas as pd
 from os import listdir
 import argparse
@@ -11,12 +13,20 @@ parser.add_argument("annotation_file", metavar="annotation-file", help="Full pat
 parser.add_argument("output_file", metavar="output-file", help="Name of output file")
 # Example: 'variantCount_output.txt'
 
-parser.add_argument("sample_file_dir", metavar="sample-file_dir", help="Full path of sample file directory")
+parser.add_argument("sample_file_dir", metavar="sample-file-dir", help="Full path of sample file directory")
 # Example: 'Filtered_SomaticCalls_v1/'
 
-args = parser.parse_args()
-print("args", args)
+parser.add_argument("batch_num", metavar="batch-number", help="Batch number of Batches of form '2/5'")
+# Example: 1
 
+args = parser.parse_args()
+# print("args", args)
+
+# Function to create iterator that yields n-sized chunks
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 
 #the annotation file should be in the same directory as the script
 annotations = pd.read_csv(args.annotation_file, delimiter='\t', compression='gzip')[['f0', 'SOMATIC', 'LeukemiaGene', 'TOPMed_CHIPVar']].set_index('f0')
@@ -51,7 +61,14 @@ with open(args.output_file, 'w') as fh:
                        ]))
     fh.write('\n')
 
-    for file in listdir(args.sample_file_dir):
+    sample_file_directory = listdir(args.sample_file_dir).sort()
+    batch_num, batch_total = args.batch_num.split("/")
+    batch_num = int(batch_num)
+    batch_total = int(batch_total)
+
+    sample_filename_batch = list(chunks(sample_file_directory, batch_total))[batch_num - 1]
+
+    for file in sample_filename_batch:
         sample = pd.read_csv(args.sample_file_dir + file, delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
         temp = pd.concat([annotations, sample], axis=1, join='inner')
 
