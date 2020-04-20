@@ -20,7 +20,7 @@ parser.add_argument("batch_num", metavar="batch-number", help="Batch number of B
 # Example: 1
 
 args = parser.parse_args()
-print("args", args.sample_file_dir)
+print("args", args)
 
 # Function to create iterator that yields n-sized chunks
 def chunks(lst, n):
@@ -28,7 +28,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-sample_file_directory = listdir(args.sample_file_dir).sort()
+sample_file_directory = sorted(listdir(args.sample_file_dir))
 batch_num, batch_total = args.batch_num.split("/")
 batch_num = int(batch_num)
 batch_total = int(batch_total)
@@ -72,7 +72,7 @@ with open(args.output_file, 'w') as fh:
                        ]))
     fh.write('\n')
 
-    sample_file_directory = listdir(args.sample_file_dir).sort()
+    sample_file_directory = sorted(listdir(args.sample_file_dir))
     batch_num, batch_total = args.batch_num.split("/")
     batch_num = int(batch_num)
     batch_total = int(batch_total)
