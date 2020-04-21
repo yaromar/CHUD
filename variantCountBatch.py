@@ -1,3 +1,5 @@
+#!/bin/python
+
 # This file will process sample vcf files in N-sized batches based on command line arguments (in alphanumeric sorted order of the directory)
 
 import pandas as pd
@@ -20,16 +22,6 @@ parser.add_argument("batch_num", metavar="batch-number", help="Batch number of B
 # Example: 1
 
 args = parser.parse_args()
-print("args", args)
-
-sample_file_directory = sorted(listdir(args.sample_file_dir))
-batch_num, batch_total = args.batch_num.split("/")
-batch_num = int(batch_num)
-batch_total = int(batch_total)
-sample_filename_batch = np.array_split(sample_file_directory, batch_total)
-	
-print(sample_filename_batch[batch_num - 1])
-
 
 
 #the annotation file should be in the same directory as the script
@@ -69,8 +61,8 @@ with open(args.output_file, 'w') as fh:
     batch_num, batch_total = args.batch_num.split("/")
     batch_num = int(batch_num)
     batch_total = int(batch_total)
-
     sample_filename_batch = np.array_split(sample_file_directory, batch_total)
+    sample_filename_batch = sample_filename_batch[batch_num - 1]
 	
     # print(sample_filename_batch)
 
