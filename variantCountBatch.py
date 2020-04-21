@@ -22,19 +22,11 @@ parser.add_argument("batch_num", metavar="batch-number", help="Batch number of B
 args = parser.parse_args()
 print("args", args)
 
-# Function to create iterator that yields n-sized chunks
-def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
-    listOlists = []
-    for i in range(0, len(lst), n):
-        listOlists.append(lst[i:i + n])
-    return listOlists
-
 sample_file_directory = sorted(listdir(args.sample_file_dir))
 batch_num, batch_total = args.batch_num.split("/")
 batch_num = int(batch_num)
 batch_total = int(batch_total)
-sample_filename_batch = chunks(sample_file_directory, batch_total)
+sample_filename_batch = np.array_split(sample_file_directory, batch_total)
 	
 print(sample_filename_batch[batch_num - 1])
 
@@ -78,9 +70,9 @@ with open(args.output_file, 'w') as fh:
     batch_num = int(batch_num)
     batch_total = int(batch_total)
 
-    sample_filename_batch = list(chunks(sample_file_directory, batch_total))[batch_num - 1]
+    sample_filename_batch = np.array_split(sample_file_directory, batch_total)
 	
-    print(sample_filename_batch)
+    # print(sample_filename_batch)
 
     for file in sample_filename_batch:
         sample = pd.read_csv(args.sample_file_dir + file, delimiter='\t', compression='gzip', usecols=["v", "Binomial_Prob", "VAF"]).set_index('v')
