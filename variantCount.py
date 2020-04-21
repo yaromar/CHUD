@@ -52,17 +52,17 @@ with open('variantCount_output.txt', 'w') as fh:
                             #####
                             str(len(temp.query('Binomial_Prob < 0.01'))), #overlap & binom
                             str(len(temp.query('Binomial_Prob < 0.01 & LeukemiaGene == 1'))), #overlap & leukemia & binom
-                            str(len(temp.loc[pd.isna(temp['TOPMed_CHIPVar'])].query('Binomial_Prob < 0.01'))), #overlap & topmed & binom
+                            str(len(temp.loc[pd.notna(temp['TOPMed_CHIPVar'])].query('Binomial_Prob < 0.01'))), #overlap & topmed & binom
                             str(len(temp.loc[temp['SOMATIC'].str.contains('1')].query('Binomial_Prob < 0.01'))), #overlap & somatic literature & binomial
                             #####
                             str(len(temp.query('VAF > 0.1'))), #overlap & VAF
                             str(len(temp.query('VAF > 0.1 & LeukemiaGene == 1'))), #overlap & leukemia & VAF
-                            str(len(temp.loc[pd.isna(temp['TOPMed_CHIPVar'])].query('VAF > 0.1'))), #overlap & topmed & VAF
+                            str(len(temp.loc[pd.notna(temp['TOPMed_CHIPVar'])].query('VAF > 0.1'))), #overlap & topmed & VAF
                             str(len(temp.loc[temp['SOMATIC'].str.contains('1')].query('VAF > 0.1'))), #overlap & somatic literature & VAF
                             #####
                             str(len(temp.query('Binomial_Prob < 0.01 & VAF > 0.1'))), #overlap & binom
                             str(len(temp.query('Binomial_Prob < 0.01 & VAF > 0.1 & LeukemiaGene == 1'))), #overlap & leukemia & binom & VAF
-                            str(len(temp.loc[pd.isna(temp['TOPMed_CHIPVar'])].query('Binomial_Prob < 0.01 & VAF > 0.1'))), #overlap & topmed & binom & VAF
+                            str(len(temp.loc[pd.notna(temp['TOPMed_CHIPVar'])].query('Binomial_Prob < 0.01 & VAF > 0.1'))), #overlap & topmed & binom & VAF
                             str(len(temp.loc[temp['SOMATIC'].str.contains('1')].query('Binomial_Prob < 0.01 & VAF > 0.1'))) #overlap & somatic literature & binomial & VAF
                            ]))
         fh.write('\n')
