@@ -1,31 +1,8 @@
-pheno7 = fread('/medpop/esp2/mzekavat/UKBB/ukbb_PhenoFile.ForClassProj.QCed.txt.gz', header=TRUE, sep="\t")
-pheno7= data.frame(pheno7)
+R
 
 library(data.table)
 pheno7 = fread("/path/to/phenoFile.gz",header=T)
 pheno7 = data.frame(pheno7)
-
-
-merged = merge(pheno7, files_df, by.x=c(1), by.y=c(2))
-merged$varCnt = as.integer(merged$varCnt)
-summary(glm(varCnt~age, data=merged))
-
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 1449.5769     9.7155 149.202   <2e-16 ***
-age           -0.1985     0.1686  -1.177    0.239 
-
-merged$hasCHIP = as.integer(merged$hasCHIP)
-summary(glm(varCnt~hasCHIP, data=merged))
-Coefficients:
-            Estimate Std. Error  t value Pr(>|t|)    
-(Intercept) 1438.300      1.337 1075.775   <2e-16 ***
-hasCHIP       -1.634      7.546   -0.217    0.829 
-
-# QCtest = fread('/medpop/esp2/mzekavat/CHIP/CHUD/data/test.txt', header=TRUE, sep="\t")
-# QCtest$s_id = unlist(lapply( strsplit(QCtest$sample_id,"_"), "[", 1))
-# QCtest =QCtest[,c(8,2:6)]
-# QCtest = data.frame(QCtest)
 
 varcounts = data.frame()
 for (i in 1:10){
@@ -38,10 +15,12 @@ varcounts$sample_id = unlist(lapply( strsplit(varcounts$sample_id,"_"), "[", 1))
 pheno8 = merge(pheno7, varcounts, by=c(1))
 pheno8$Large_CHIP = factor(pheno8$Large_CHIP , levels=c("NO_CHIP", "LARGE_CHIP","SMALL_CHIP"))
 vars=colnames(varcounts)[2:18]
-pheno_list2 = c("AML", "MPN", "Coronary_Artery_Disease_SOFT", "COVID")
+pheno_list2 = c("AML", "MPN")
 vars = c(vars, c('hasCHIP', 'Large_CHIP'))
 summaryDF = data.frame()
 tmp=pheno8
+
+## Running logistic regression:
 for (i in 1:length(pheno_list2)){
 for (j in 1:length(vars)){
 
@@ -78,6 +57,7 @@ summaryDF = rbind(summaryDF, df)
 write.table(summaryDF,"/medpop/esp2/mzekavat/CHIP/CHUD/VarCounts.PheWAS.logreg.txt",
 col.names = T, row.names = F, quote = F, sep = "\t")
 
+#Separately running associations adjusted for CHIP:
 summary( glm(AML ~overlap_._LeukemiaGene+hasCHIP + age +age2 + Sex_numeric+ PC1+PC2+PC3+PC4+PC5, data = pheno8, family='binomial'))
 Coefficients:
                          Estimate Std. Error z value Pr(>|z|)    
@@ -185,13 +165,8 @@ PC3                -0.114054   0.106909  -1.067  0.28605
 PC4                -0.122472   0.072550  -1.688  0.09139 . 
 PC5                 0.032668   0.034749   0.940  0.34715   
 
-summary( glm(Chronic_kidney_disease ~overlap_._TOPMed_CHIPVar_._binom_._VAF+ age + Sex_numeric+ ever_smoked+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10, 
-		data = pheno8, family='binomial'))
 
-
-summary( glm(Chronic_kidney_disease ~hasCHIP+ age + Sex_numeric+ ever_smoked+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10, 
-		data = pheno8, family='binomial'))
-
+## Running associations with age
 vars = c("age")
 pheno_list2=c(colnames(varcounts)[2:18], c('hasCHIP', 'Large_CHIP'))
 summaryDF = data.frame()
@@ -216,6 +191,7 @@ summaryDF = rbind(summaryDF, df)
 write.table(summaryDF,"/medpop/esp2/mzekavat/CHIP/CHUD/VarCounts.age.linreg.txt",
 col.names = T, row.names = F, quote = F, sep = "\t")
 
+### Running CoxPh associations with CAD
 library(survival)
 pheno_list = c("Coronary_Artery_Disease_SOFT")
 vars=c(colnames(varcounts)[2:18], c('hasCHIP', 'Large_CHIP'))
@@ -255,7 +231,13 @@ col.names = T, row.names = F, quote = F, sep = "\t")
 
 
 ##### Making forest plots:
-
+library(ggplot2) #plotting system
+library(grid)
+library(reshape2)
+library(scales)
+library(ggrepel)
+library(plotly)
+library(meta)
 Forest = read.table("/medpop/esp2/mzekavat/CHIP/CHUD/data/Forest_logreg_AML_MPN_CHUD.txt" ,
                    header=T, as.is=T, stringsAsFactors=F, comment.char = '', sep="\t")
 Forest$Pval = as.character(Forest$Pr...z..)
@@ -276,14 +258,7 @@ Forest$x = ifelse(Forest$x == "overlap_._TOPMed_CHIPVar_._VAF", 'Rare_deleteriou
 																ifelse(Forest$x == "overlap_._binom_._VAF", "Rare_deleterious_binom_LargeClone", 
 																	ifelse(Forest$x == "overlap_._VAF", "Rare_deleterious_LargeClone",
 																		ifelse(Forest$x == "overlap_._SOMATIC_._VAF","Rare_deleterious_SOMATIC_LargeClone", Forest$x )))))))) )))))))))
-#Forest$Phenotype = ordered(Forest$Phenotype, levels=c('Pneumonia','Influenza or Pneumonia','Influenza or Viral Pneumonia','Other Lower Respiratory Infection','Chronic Lower Respiratory Disease','Other Acute Upper Respiratory Infection','Other Upper Respiratory Disease','Other Interstitial Respiratory Disease','ARDS or Pulmonary Failure','ARDS'))
-library(ggplot2) #plotting system
-library(grid)
-library(reshape2)
-library(scales)
-library(ggrepel)
-library(plotly)
-library(meta)
+
 summarymeta=metagen(Estimate,Std..Error,studlab=x,byvar = y,data=Forest,sm="OR")
 pdf(paste("/medpop/esp2/mzekavat/CHIP/CHUD/data/Forest_logreg_AML_MPN_CHUD.pdf",sep=""), width = 18, height= 10)
 forest(summarymeta,leftcols =c("studlab"),leftlabs = c(""),just='left',colgap.left=unit(0.1,"cm"),xlim=c(1,12),at=c(1,3,6,9,12),
@@ -312,14 +287,7 @@ Forest$x = ifelse(Forest$x == "overlap_._TOPMed_CHIPVar_._VAF", 'Rare_deleteriou
 																ifelse(Forest$x == "overlap_._binom_._VAF", "Rare_deleterious_binom_LargeClone", 
 																	ifelse(Forest$x == "overlap_._VAF", "Rare_deleterious_LargeClone",
 																		ifelse(Forest$x == "overlap_._SOMATIC_._VAF","Rare_deleterious_SOMATIC_LargeClone", Forest$x )))))))) )))))))))
-#Forest$Phenotype = ordered(Forest$Phenotype, levels=c('Pneumonia','Influenza or Pneumonia','Influenza or Viral Pneumonia','Other Lower Respiratory Infection','Chronic Lower Respiratory Disease','Other Acute Upper Respiratory Infection','Other Upper Respiratory Disease','Other Interstitial Respiratory Disease','ARDS or Pulmonary Failure','ARDS'))
-library(ggplot2) #plotting system
-library(grid)
-library(reshape2)
-library(scales)
-library(ggrepel)
-library(plotly)
-library(meta)
+
 summarymeta=metagen(coef,se.coef.,studlab=x,data=Forest,sm="HR")
 pdf(paste("/medpop/esp2/mzekavat/CHIP/CHUD/data/Forest_hr_CAD_CHUD.pdf",sep=""), width = 18, height= 6)
 forest(summarymeta,leftcols =c("studlab"),leftlabs = c(""),just='left',colgap.left=unit(0.1,"cm"),xlim=c(.95,2.5),at=c(.95,1,1.1,1.5,2,2.5),
@@ -329,252 +297,7 @@ forest(summarymeta,leftcols =c("studlab"),leftlabs = c(""),just='left',colgap.le
 dev.off()
 
 
-#----------- Merging AML and MPN Var with their respective variant annotations:
-
-library(data.table)
-AML = fread("/medpop/esp2/mzekavat/CHIP/CHUD/data/AML_alleles.txt",header=F)
-AML = data.frame(AML)
-
-MPN = fread("/medpop/esp2/mzekavat/CHIP/CHUD/data/MPN_alleles.txt",header=F)
-MPN = data.frame(MPN)
-
-
-Annot= fread("/medpop/esp2/mzekavat/CHIP/CHUD/data/variant_annot/UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.gz",header=T)
-Annot = data.frame(Annot)
-
-merged_AML = merge(AML,Annot, by=c(1))
-
-merged_MPN = merge(MPN,Annot, by=c(1))
-
-write.table(merged_AML,"/medpop/esp2/mzekavat/CHIP/CHUD/data/AML_alleles.withAnnot.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-
-write.table(merged_MPN,"/medpop/esp2/mzekavat/CHIP/CHUD/data/MPN_alleles.withAnnot.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-RF_AML = fread("/medpop/esp2/mzekavat/CHIP/CHUD/importance_SNPs/RF_AML_importance.txt",header=F)
-RF_AML = data.frame(RF_AML)
-colnames(RF_AML) = c("var", "Importance")
-
-RF_MPN = fread("/medpop/esp2/mzekavat/CHIP/CHUD/importance_SNPs/RF_MPN_importance.txt",header=F)
-RF_MPN = data.frame(RF_MPN)
-colnames(RF_MPN) = c("var", "Importance")
-
-RF_AML_Merged = merge(RF_AML,Annot, by=c(1))
-
-RF_MPN_Merged = merge(RF_MPN,Annot, by=c(1))
-
-
-write.table(RF_AML_Merged,"/medpop/esp2/mzekavat/CHIP/CHUD/importance_SNPs/RF_AML_importance.VarWithAnnot.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-
-write.table(RF_MPN_Merged,"/medpop/esp2/mzekavat/CHIP/CHUD/importance_SNPs/RF_MPN_importance.VarWithAnnot.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-merged_AML_filtered = merged_AML[which(!is.na(merged_AML$SOMATIC) & is.na(merged_AML$LeukemiaGene)),]
-GeneCounts = table(merged_AML_filtered$Gene)
-GeneCounts = data.frame(GeneCounts)
-AML_GeneCounts = GeneCounts[order(-GeneCounts$Freq),]
-
-write.table(GeneCounts,"/medpop/esp2/mzekavat/CHIP/CHUD/data/AML_alleles.GeneCounts.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-
-merged_MPN_filtered = merged_MPN[which(!is.na(merged_MPN$SOMATIC) & is.na(merged_MPN$LeukemiaGene)),]
-GeneCounts = table(merged_MPN_filtered$Gene)
-GeneCounts = data.frame(GeneCounts)
-MPN_GeneCounts = GeneCounts[order(-GeneCounts$Freq),]
-write.table(GeneCounts,"/medpop/esp2/mzekavat/CHIP/CHUD/data/MPN_alleles.GeneCounts.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-colnames(AML_GeneCounts) = paste("AML",colnames(AML_GeneCounts) ,sep="" )
-colnames(MPN_GeneCounts) = paste("MPN",colnames(MPN_GeneCounts) ,sep="" )
-
-merged_AML_MPN_GeneCounts = merge(AML_GeneCounts,MPN_GeneCounts,by=c(1))
-merged_AML_MPN_GeneCounts$SumFreq = rowSums(merged_AML_MPN_GeneCounts[,c(2,3)],na.rm=TRUE)
-merged_AML_MPN_GeneCounts = merged_AML_MPN_GeneCounts[order(-merged_AML_MPN_GeneCounts$SumFreq),]
-write.table(merged_AML_MPN_GeneCounts,"/medpop/esp2/mzekavat/CHIP/CHUD/data/AMLandMPN_alleles.GeneCounts.txt",
-col.names = T, row.names = F, quote = F, sep = "\t")
-
-
-
-summary(glm(num_FilterMutect~age, data=pheno8))
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 1449.5769     9.7155 149.202   <2e-16 ***
-age           -0.1985     0.1686  -1.177    0.239 
-
-summary(glm(annotated_overlap~age, data=pheno8))
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 42.42451    1.20396  35.238   <2e-16 ***
-age         -0.03048    0.02090  -1.459    0.145    
----
-summary(glm(SOMATIC~age, data=pheno8))
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 0.1308365  0.0253285   5.166 2.41e-07 ***
-age         0.0039876  0.0004397   9.070  < 2e-16 ***
-
-summary(glm(LeukemiaGene~age+hasCHIP, data=pheno8)
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -0.099429   0.007834  -12.69   <2e-16 ***
-age          0.002469   0.000136   18.16   <2e-16 ***
-
-
-summary(glm(LeukemiaGene~age, data=pheno8[-which(pheno8$hasCHIP==1),]))
-              Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -4.498e-02  5.012e-03  -8.973   <2e-16 ***
-age          1.086e-03  8.716e-05  12.454   <2e-16 ***
-
-
-summary(glm(TOPMed_CHIPVar~age, data=pheno8))
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 5.6466323  0.1795771  31.444   <2e-16 ***
-age         0.0001407  0.0031171   0.045    0.964
-
-library(tidyr)
-
-summary(glm(SOMATIC~hasCHIP, data=pheno8))
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  0.32466    0.00335   96.93   <2e-16 ***
-hasCHIP      1.07617    0.01891   56.92   <2e-16 ***
-
-summary(glm(LeukemiaGene~hasCHIP, data=pheno8))
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 0.0168678  0.0008143   20.71   <2e-16 ***
-hasCHIP     0.7856427  0.0045964  170.93   <2e-16 ***
-
-summary(glm(AML~SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8[-which(pheno8$hasCHIP==1),]))
-Call:
-glm(formula = AML ~ SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + 
-    PC5, family = binomial, data = pheno8[-which(pheno8$hasCHIP == 
-    1), ])
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--0.3651  -0.0524  -0.0414  -0.0325   4.1708  
-Coefficients:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -9.88568    1.87374  -5.276 1.32e-07 ***
-SOMATIC      0.48366    0.13777   3.511 0.000447 ***
-age          0.05973    0.02334   2.559 0.010483 *  
-SexMale      0.52806    0.32160   1.642 0.100596    
-PC1          0.08294    0.10080   0.823 0.410631    
-PC2          0.02795    0.10496   0.266 0.790047    
-PC3         -0.04483    0.10180  -0.440 0.659677    
-PC4         -0.09952    0.06924  -1.437 0.150623    
-PC5          0.01950    0.03362   0.580 0.561957  
-
-summary(glm(AML~SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8[-which(pheno8$LeukemiaGene>=1),]))
-Call:
-glm(formula = AML ~ SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + 
-    PC5, family = binomial, data = pheno8[-which(pheno8$LeukemiaGene >= 
-    1), ])
-
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--0.2761  -0.0496  -0.0403  -0.0325   4.1044  
-
-Coefficients:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -9.51628    1.96322  -4.847 1.25e-06 ***
-SOMATIC      0.39785    0.17293   2.301   0.0214 *  
-age          0.05175    0.02418   2.140   0.0324 *  
-SexMale      0.32230    0.33682   0.957   0.3386    
-PC1          0.07288    0.10782   0.676   0.4991    
-PC2          0.01520    0.11187   0.136   0.8919    
-PC3         -0.12353    0.10825  -1.141   0.2538    
-PC4         -0.12482    0.07372  -1.693   0.0904 .  
-PC5          0.02847    0.03558   0.800   0.4237 
-
-
-summary(glm(AML~hasCHIP + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8))
-
-
-summary(glm(AML~LeukemiaGene + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8[-which(pheno8$hasCHIP==1),]))
-Call:
-glm(formula = AML ~ LeukemiaGene + age + Sex + PC1 + PC2 + PC3 + 
-    PC4 + PC5, family = binomial, data = pheno8[-which(pheno8$hasCHIP == 
-    1), ])
-
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--0.5525  -0.0511  -0.0413  -0.0334   4.1126  
-
-Coefficients:
-             Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -9.50053    1.87072  -5.079 3.80e-07 ***
-LeukemiaGene  1.88898    0.40735   4.637 3.53e-06 ***
-age           0.05424    0.02348   2.310   0.0209 *  
-SexMale       0.51420    0.32167   1.599   0.1099    
-PC1           0.08079    0.10076   0.802   0.4227    
-PC2           0.03463    0.10576   0.327   0.7433    
-PC3          -0.05191    0.10234  -0.507   0.6120    
-PC4          -0.09999    0.07006  -1.427   0.1535    
-PC5           0.01936    0.03367   0.575   0.5654
-
-summary(glm(AML~SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8[-which(pheno8$hasCHIP==1),]))
-Call:
-glm(formula = AML ~ SOMATIC + age + Sex + PC1 + PC2 + PC3 + PC4 + 
-    PC5, family = binomial, data = pheno8[-which(pheno8$hasCHIP == 
-    1), ])
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--0.3651  -0.0524  -0.0414  -0.0325   4.1708  
-Coefficients:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -9.88568    1.87374  -5.276 1.32e-07 ***
-SOMATIC      0.48366    0.13777   3.511 0.000447 ***
-age          0.05973    0.02334   2.559 0.010483 *  
-SexMale      0.52806    0.32160   1.642 0.100596    
-PC1          0.08294    0.10080   0.823 0.410631    
-PC2          0.02795    0.10496   0.266 0.790047    
-PC3         -0.04483    0.10180  -0.440 0.659677    
-PC4         -0.09952    0.06924  -1.437 0.150623    
-PC5          0.01950    0.03362   0.580 0.561957  
-
-glm(formula = Coronary_Artery_Disease_SOFT ~ SOMATIC + age + 
-    Sex + PC1 + PC2 + PC3 + PC4 + PC5, family = binomial, data = pheno8[-which(pheno8$hasCHIP == 
-    1), ])
-
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--0.8296  -0.4664  -0.3430  -0.2283   3.0963  
-
-Coefficients:
-             Estimate Std. Error z value Pr(>|z|)    
-(Intercept) -8.835604   0.251947 -35.069   <2e-16 ***
-SOMATIC      0.036861   0.029597   1.245   0.2130    
-age          0.096985   0.003152  30.769   <2e-16 ***
-SexMale      0.761915   0.040497  18.814   <2e-16 ***
-PC1         -0.022264   0.012813  -1.738   0.0823 .  
-PC2         -0.001196   0.013137  -0.091   0.9275    
-PC3          0.020227   0.012745   1.587   0.1125    
-PC4          0.005296   0.009027   0.587   0.5574    
-PC5          0.004544   0.004079   1.114   0.2652  
-
-summary(glm(Coronary_Artery_Disease_SOFT~LeukemiaGene + age + Sex + PC1 + PC2 + PC3 + PC4 + PC5, family=binomial, data=pheno8[-which(pheno8$hasCHIP==1),]))
-Coefficients:
-               Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -8.8191449  0.2519658 -35.001   <2e-16 ***
-LeukemiaGene  0.1583735  0.1230526   1.287   0.1981    
-age           0.0968679  0.0031556  30.697   <2e-16 ***
-SexMale       0.7614468  0.0404982  18.802   <2e-16 ***
-PC1          -0.0221530  0.0128114  -1.729   0.0838 .  
-PC2          -0.0009143  0.0131368  -0.070   0.9445    
-PC3           0.0200946  0.0127457   1.577   0.1149    
-PC4           0.0052813  0.0090279   0.585   0.5585    
-PC5           0.0045876  0.0040788   1.125   0.2607
-
-
-
-
+#### Making figures
 library(tidyr)
 
 pheno9= pheno8[,c(1,3,4,278, 640,644,631,632, 633,720:735)]
