@@ -1,6 +1,6 @@
 # CHUD Project
 
-Welcome to the working directory of the CHUD Project! The goal of this project is to identify new somatic mutations that may influence clonal hematopoiesis of indeterminate potential (CHIP). These novel mutations are sometimes called CHUD mutations. What follows is a description of the files by the authors and links to our papers for the Yale CBB 750 Course: Core Topics in Biomedical Informatics (Spring 2020).
+Welcome to the working directory of the CHUD Project! The goal of this project is to identify new somatic variants that may influence clonal hematopoiesis of indeterminate potential (CHIP). These novel variants may be called clonal hematopoiesis of uknown drivers (CHUD). What follows is a description of the files by the authors and links to our papers for the Yale CBB 750 Course: Core Topics in Biomedical Informatics (Spring 2020).
 
 ## Links to accompanying documents
 
