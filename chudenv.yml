@@ -1,4 +1,4 @@
-name: /gpfs/ysm/project/rtaylor/vs428/conda_envs/chudenv
+name: chudenv
 channels:
   - conda-forge
   - defaults
