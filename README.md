@@ -44,7 +44,7 @@ Function:
 Input:  
 Output:    
 
-Socrates_CHUD_Data_Cleaner.ipynb     
+_Socrates_CHUD_Data_Cleaner.ipynb_     
 Developer: Vimig   
 Function:   
 Input:  
@@ -52,7 +52,7 @@ Output:
 
 ### Variant Count and Analysis Scripts 
 
-variantCount.py   
+_variantCount.py_   
 Developer: Yaro  
 Function: Filters variants by annotations and produces counts that are used for our regression analyses.  
 Input:   
@@ -63,13 +63,13 @@ annotation file=
 Output:  
 variantCount_output.txt    
 
-variantCountBatch.py   
+_variantCountBatch.py_   
 Developer: Vimig  
 Function:  
 Input:  
 Output:   
 
-Rscript_regression.R  
+_Rscript_regression.R_  
 Developer: Maryam Zekavat  
 Function: Used this to perform associations of variant counts among various groupings with age, CHIP clone size, and phenotypes (AML, MPN, CAD). This script was also used for the plots created in the paper (Fig 1-6).
 Input: Phenotype file and variant counts  
@@ -77,7 +77,7 @@ Output: Logistic regression results, CoxPH association results with CAD, and fig
 
 ## Visualization, Dimensionality Reduction, Clustering
 
-Vis_clustering_yaro.ipynb  
+_Vis_clustering_yaro.ipynb_  
 Developer: Yaro  
 Function: data processing, PCA, embedding(t-SNE, UMAP, t-SNE), clustering(K-means, agglomerative, DBSCAN)
 Input: training data=’sample_var_phenos_leuk_topmed_v2.feather’  
@@ -85,20 +85,20 @@ Output: figures/stats
 
 ## Classification Methods
 
-CHUD_Data_Model_Trainer.ipynb     
+_CHUD_Data_Model_Trainer.ipynb_     
 Developer: Vimig   
 Function:   
 Input:  
 Output:    
 
-CHUD_multi_model_run.py    
+_CHUD_multi_model_run.py_    
 Developer: Vimig   
 Function:   
 Input:  
 Output:    
 
 
-Data_exploration.py  
+_Data_exploration.py_  
 Developer: Vimig  
 Function:  
 Input:  
@@ -106,9 +106,9 @@ Output:
 
 ## Other Files
 
-socrates_chud_jupyter_job.slurm - slurm script to start Vimig's Jupyter notebook on the HPC   
-variant_count_batch_job.slurm - different way to run job array on HPC     
-variantcountbatchjob.txt - jobfile to run job array on HPC     
-yaro_chud_jupyter_job.slurm - slurm script to start Yaro's Jupyter notebook on the HPC
+_socrates_chud_jupyter_job.slurm_ - slurm script to start Vimig's Jupyter notebook on the HPC   
+_variant_count_batch_job.slurm_ - different way to run job array on HPC     
+_variantcountbatchjob.txt_ - jobfile to run job array on HPC     
+_yaro_chud_jupyter_job.slurm_ - slurm script to start Yaro's Jupyter notebook on the HPC
 
 
