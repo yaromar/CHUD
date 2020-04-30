@@ -58,6 +58,7 @@ _Function_: Filters variants by annotations and produces counts that are used fo
 _Input_:    
 - annotation file = 'UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz'   
 - variant calls folder = Filtered_SomaticCalls_v1/      
+
 _Output_: variantCount_output.txt         
 
 **variantCountBatch.py**      
