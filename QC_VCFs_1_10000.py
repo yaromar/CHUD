@@ -24,7 +24,7 @@ recoding_dict['Y'] = 'chrY'
 files = hl.import_table('gs://maryam_lipids/UKBB_CHIP/filenames.txt',impute=True,no_header=True)
 files_list = [row['f0'] for row in files.select(files.f0).collect()]
 
-for num in range(15000,30000):
+for num in range(1,10000):
 	print(num)
 	filenamev2 = files_list[num].strip()
 	mt=hl.import_vcf(filenamev2,filter='\d/\d/\d', skip_invalid_loci=True,force_bgz=True,reference_genome='GRCh38',contig_recoding=recoding_dict)

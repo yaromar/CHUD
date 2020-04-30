@@ -1,39 +1,6 @@
-
-gsutil -m cp /medpop/esp2/mzekavat/UKBB/ukbb_PhenoFile.ALL_500k_incidPrevCases.plusRespPhenos.plusBPMeds.plusPFTs.plusCHIP.QCed.txt gs://ukbb_v2/projects/mzekavat/Pneumonia_GWAS/
-library(data.table)
-
-setwd('/medpop/esp2/mzekavat/CHIP/CHUD/data/Filtered_SomaticCalls_v1/')
-
-all.files <- list.files(path = "/medpop/esp2/mzekavat/CHIP/CHUD/data/Filtered_SomaticCalls_v1/",pattern = ".bgz")
-files_df = data.frame(path = all.files)
-files_df$path = as.character(files_df$path)
-files_df$s_id = unlist(lapply( strsplit(files_df$path,"_"), "[", 1))
-files_df$varCnt = unlist(lapply( strsplit(files_df$path,"[.]"), "[", 4))
-
-/ukbb_v2/projects/mzekavat/Pneumonia_GWAS
-pheno7 = fread('/medpop/esp2/mzekavat/UKBB/ukbb_PhenoFile.ALL_500k_incidPrevCases.plusRespPhenos.plusBPMeds.plusPFTs.plusCHIP.QCed.txt', header=TRUE, sep="\t")
-pheno7= data.frame(pheno7)
-
-pheno8 = pheno7[,c(1,3,4,)]
-
-merged = merge(pheno7, files_df, by.x=c(1), by.y=c(2))
-merged$varCnt = as.integer(merged$varCnt)
-summary(glm(varCnt~age, data=merged))
-
-Coefficients:
-             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 1449.5769     9.7155 149.202   <2e-16 ***
-age           -0.1985     0.1686  -1.177    0.239 
-
-merged$hasCHIP = as.integer(merged$hasCHIP)
-summary(glm(varCnt~hasCHIP, data=merged))
-Coefficients:
-            Estimate Std. Error  t value Pr(>|t|)    
-(Intercept) 1438.300      1.337 1075.775   <2e-16 ***
-hasCHIP       -1.634      7.546   -0.217    0.829 
-
 #----------------
-#Annotating CHUD: 
+#Maryam Zekavat
+#Annotating CHUD variants in Hail (.py environment): 
 conda activate hail
 cd /Users/mzekavat/opt/anaconda3/envs/hail
 hailctl dataproc start mz01 --master-machine-type n1-highmem-16 --worker-machine-type n1-highmem-16 --worker-boot-disk-size 200 --num-workers 10 --num-preemptible-workers 20 --master-boot-disk-size 100 --region us-east1 --zone us-east1-d --requester-pays-allow-all --vep GRCh38 --properties "spark:spark.driver.memory=90G,spark:spark.driver.maxResultSize=50G,spark:spark.kryoserializer.buffer.max=1G,spark:spark.task.maxFailures=20,spark:spark.driver.extraJavaOptions=-Xss4M,spark:spark.executor.extraJavaOptions=-Xss4M,spark:spark.speculation=true"
