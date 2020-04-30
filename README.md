@@ -1,28 +1,75 @@
-# CHUD
+# CHUD Project
 
-AnnotatingVariants.py  
+Welcome to the working directory of the CHUD Project! The goal of this project is to identify new somatic mutations that may influence clonal hematopoiesis of indeterminate potential (CHIP). These novel mutations are sometimes called CHUD mutations. What follows is a description of the files by the authors and links to our papers for the Yale CBB 750 Course: Core Topics in Biomedical Informatics (Spring 2020).
+
+## Links to accompanying documents
+
+**Final Paper (must be Yale affiliate):**  https://docs.google.com/document/d/1iSKAuRb69XYnhAc-ekac-dC_p3VXT_xXHuklum3oSbs/edit?usp=sharing   
+**Final Presentation (must be Yale affiliate):** https://docs.google.com/presentation/d/1RdI-UUncxgI_9gh3H0MrojjGzQpWJ6WO9-MKAtkrKBo/edit?usp=sharing    
+**Link to Github project:** https://github.com/yaromar/CHUD    
+
+------
+
+## Installing the code
+
+We tried to make it as easy as possible!  
+
+1. Make sure you have [miniconda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) installed 
+2. Create a new environment using the command `conda env create -f chudenv.yml` from within your git directory.
+3. Activate your new conda env using `conda activate myenv` 
+4. Verify it worked using `conda env list`    
+5. Done!   
+
+-----
+
+## Description of files
+
+### Data Manipulation Scripts 
+
+_AnnotatingVariants.py_
 Developer: Maryam Zekavat  
 Function: Used this to annotate a list of 12.5 million unique somatic variants in Hail-0.2. Script is meant to be run on the google cloud.  
 Input: List of unique variants  
 Output: List of unique variants with annotations    
 
-Merge_SomaticVCFS_1_10000.py  
+_Merge_SomaticVCFS_1_10000.py_  
 Developer: Maryam Zekavat  
 Function: Used this to convert somatic variants from within 50,000 variant call format (VCF) files to tab-delimited .bgz files for further analysis. Additionally, this script also performs quality control filtration of the somatic variants to high-quality variants.    
 Input: 50,000 vcf.gz files  
-Output: 50,000 .bgz files (tab-delimited)    
+Output: 50,000 .bgz files (tab-delimited)   
+
+_Chuddb_init_script.sql_  
+Developer: Vimig   
+Function:   
+Input:  
+Output:    
+
+
 
 Rscript_regression.R  
 Developer: Maryam Zekavat  
 Function: Used this to perform associations of variant counts among various groupings with age, CHIP clone size, and phenotypes (AML, MPN, CAD). This script was also used for the plots created in the paper (Fig 1-6).
 Input: Phenotype file and variant counts  
-Output: Logistic regression results, CoxPH association results with CAD, and figures    
+Output: Logistic regression results, CoxPH association results with CAD, and figures   
 
-Chuddb_init_script.sql  
+CHUD_Data_Model_Trainer.ipynb     
 Developer: Vimig   
 Function:   
 Input:  
 Output:    
+
+CHUD_multi_model_run.py    
+Developer: Vimig   
+Function:   
+Input:  
+Output:    
+
+Socrates_CHUD_Data_Cleaner.ipynb     
+Developer: Vimig   
+Function:   
+Input:  
+Output:    
+
 
 Data_exploration.py  
 Developer: Vimig  
@@ -42,7 +89,6 @@ Output:
 variantCount_output.txt    
 
 
-
 variantCountBatch.py   
 Developer: Vimig  
 Function:  
@@ -54,3 +100,13 @@ Developer: Yaro
 Function: data processing, PCA, embedding(t-SNE, UMAP, t-SNE), clustering(K-means, agglomerative, DBSCAN)
 Input: training data=’sample_var_phenos_leuk_topmed_v2.feather’  
 Output: figures/stats  
+
+
+## Other Files
+
+socrates_chud_jupyter_job.slurm    
+variant_count_batch_job.slurm     
+variantcountbatchjob.txt      
+yaro_chud_jupyter_job.slurm     
+
+
