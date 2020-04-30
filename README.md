@@ -95,7 +95,7 @@ _Function:_ Does the same thing as `_CHUD_Data_Model_Trainer.ipynb_` but way cle
 _Input:_ training data=’sample_var_phenos_leuk_topmed_v2.feather’     
 _Output:_ pretty ROC curves and confusion matrices, along with saved copies of trained models and CSVs of    importance/coefficients. Also saves summary file of accuracy, precision, recall, and F1 scores for all models trained    
 
-### Other Files   
+### HPC Job Files   
 
 _socrates_chud_jupyter_job.slurm_ - slurm script to start Vimig's Jupyter notebook on the HPC      
 _variant_count_batch_job.slurm_ - different way to run job array on HPC         
