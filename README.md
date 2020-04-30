@@ -44,13 +44,46 @@ Function:
 Input:  
 Output:    
 
+Socrates_CHUD_Data_Cleaner.ipynb     
+Developer: Vimig   
+Function:   
+Input:  
+Output:    
 
+### Variant Count and Analysis Scripts 
+
+variantCount.py   
+Developer: Yaro  
+Function: Filters variants by annotations and produces counts that are used for our regression analyses.  
+Input:   
+annotation file= 
+‘UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz’
+        variant calls folder = 
+            Filtered_SomaticCalls_v1/
+Output:  
+variantCount_output.txt    
+
+variantCountBatch.py   
+Developer: Vimig  
+Function:  
+Input:  
+Output:   
 
 Rscript_regression.R  
 Developer: Maryam Zekavat  
 Function: Used this to perform associations of variant counts among various groupings with age, CHIP clone size, and phenotypes (AML, MPN, CAD). This script was also used for the plots created in the paper (Fig 1-6).
 Input: Phenotype file and variant counts  
 Output: Logistic regression results, CoxPH association results with CAD, and figures   
+
+## Visualization, Dimensionality Reduction, Clustering
+
+Vis_clustering_yaro.ipynb  
+Developer: Yaro  
+Function: data processing, PCA, embedding(t-SNE, UMAP, t-SNE), clustering(K-means, agglomerative, DBSCAN)
+Input: training data=’sample_var_phenos_leuk_topmed_v2.feather’  
+Output: figures/stats  
+
+## Classification Methods
 
 CHUD_Data_Model_Trainer.ipynb     
 Developer: Vimig   
@@ -64,12 +97,6 @@ Function:
 Input:  
 Output:    
 
-Socrates_CHUD_Data_Cleaner.ipynb     
-Developer: Vimig   
-Function:   
-Input:  
-Output:    
-
 
 Data_exploration.py  
 Developer: Vimig  
@@ -77,36 +104,11 @@ Function:
 Input:  
 Output:    
 
-variantCount.py   
-Developer: Yaro  
-Function: Filters variants by annotations and produces counts that are used for our regression analyses.  
-Input:   
-annotation file= 
-‘UKBB_CHIP-somVariants.filtered_rare_disruptive_LOF.annotated.bgz’
-        variant calls folder = 
-            Filtered_SomaticCalls_v1/
-Output:  
-variantCount_output.txt    
-
-
-variantCountBatch.py   
-Developer: Vimig  
-Function:  
-Input:  
-Output:   
-
-Vis_clustering_yaro.ipynb  
-Developer: Yaro  
-Function: data processing, PCA, embedding(t-SNE, UMAP, t-SNE), clustering(K-means, agglomerative, DBSCAN)
-Input: training data=’sample_var_phenos_leuk_topmed_v2.feather’  
-Output: figures/stats  
-
-
 ## Other Files
 
-socrates_chud_jupyter_job.slurm    
-variant_count_batch_job.slurm     
-variantcountbatchjob.txt      
-yaro_chud_jupyter_job.slurm     
+socrates_chud_jupyter_job.slurm - slurm script to start Vimig's Jupyter notebook on the HPC   
+variant_count_batch_job.slurm - different way to run job array on HPC     
+variantcountbatchjob.txt - jobfile to run job array on HPC     
+yaro_chud_jupyter_job.slurm - slurm script to start Yaro's Jupyter notebook on the HPC
 
 
