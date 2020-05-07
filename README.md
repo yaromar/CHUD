@@ -32,7 +32,7 @@ _Function:_ Used this to annotate a list of 12.5 million unique somatic variants
 _Input:_ List of unique variants     
 _Output:_ List of unique variants with annotations       
 
-**QC_VCFS_1_10000.py**    
+**QC_VCFs_1_10000.py**    
 _Developer:_ Maryam Zekavat      
 _Function:_ Used this to convert somatic variants from within 50,000 variant call format (VCF) files to tab-delimited .bgz files for further analysis. Additionally, this script also performs quality control filtration of the somatic variants to high-quality variants.       
 _Input:_ 50,000 vcf.gz files    
