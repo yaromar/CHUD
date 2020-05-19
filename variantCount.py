@@ -76,7 +76,10 @@ with open('variantCount_output.txt', 'w') as fh:
 
 
 
-                        'yaro'
+                        'yaro',
+
+						'any CHIP & VAF'
+
 						]))
     fh.write('\n')
 
@@ -152,6 +155,8 @@ with open('variantCount_output.txt', 'w') as fh:
 
                             ####YARO:
                             str(len(sample.query('(VAF > 0.02 & VAF < 0.46) | (VAF > 0.54 & VAF < 0.98)'))), #potential clonal expansion
+
+                            str(len(temp.query('(UKBB_CHIP_wl_Var == 1 | TOPMed_CHIP_Var == 1 | UKBB_DNMT3A_otherMis_Var == 1) & VAF > 0.1'))) #any CHIP and VAF
 
 
 
