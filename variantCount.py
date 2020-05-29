@@ -5,8 +5,9 @@ import numpy as np
 #the annotation file should be in the same directory as the script
 annotationsLCR = pd.read_csv('projects_mzekavat_CHIP_somVariants.filtered_rare_disruptive_LOF.annotated.plusLCR.plusAnnovar.bgz', delimiter='\t', compression='gzip')[['f0', 'SOMATIC', 'TOPMed_CHIP_Var', 'UKBB_CHIP_wl_Var', 'UKBB_DNMT3A_otherMis_Var', 'Known_400Leukemia_Gene', 'Known_74CHIP_Gene', 'Hematopoietic_COSMIC', 'LCR']].set_index('f0')
 
-annotationsLCR = annotationsLCR.fillna({'SOMATIC': '0'}).fillna(0).query('LCR == 0')
+annotationsLCR = annotationsLCR.query('LCR == 0')
 annotationsLCR.at['chr2:197401887:C:T', 'UKBB_CHIP_wl_Var'] = 1
+annotationsLCR = annotationsLCR.fillna({'SOMATIC': '0'})
 annotationsLCR = annotationsLCR.fillna(0)
 
 #the FOLDER with the somatic calls files should be in the current directory
@@ -135,7 +136,7 @@ with open('variantCount_output.txt', 'w') as fh:
 
 
 
-                            str(len(temp)), #overlap & Hematopoietic_COSMIC & Hematopoietic_COSMIC
+                            str(len(temp.query('Hematopoietic_COSMIC == 1'))), #overlap & Hematopoietic_COSMIC & Hematopoietic_COSMIC
                             str(len(temp.query('Known_400Leukemia_Gene == 1 & Hematopoietic_COSMIC == 1'))), #overlap & leukemia gene & Hematopoietic_COSMIC
                             str(len(temp.query('Known_74CHIP_Gene == 1 & Hematopoietic_COSMIC == 1'))), #overlap & 74chip gene & Hematopoietic_COSMIC
 
